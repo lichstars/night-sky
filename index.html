@@ -1,0 +1,48 @@
+
+
+<body onLoad="init();">
+  <canvas id="canvas">
+  </canvas>
+</body>
+
+<script>
+  var x=100;
+  var y=200;
+  var speedX=5;
+  var speedY=5;
+  var radius = 2;
+
+  function init()
+  {
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+    window.addEventListener('resize', resizeCanvas, false);
+
+    setInterval(resizeCanvas, 10);
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      draw(canvas.width, canvas.height, radius);
+    }
+
+    function draw(w, h, r)
+    {
+      context.clearRect(0,0,w,h);
+
+      context.beginPath();
+      context.fillStyle="#0000ff";
+      context.arc(x,y,r,0,Math.PI*2,true);
+      context.closePath();
+      context.fill();
+
+      // Boundary Logic
+      if( x<0 || x>w) speedX=-speedX;
+      if( y<0 || y>h) speedY=-speedY;
+
+      x+=speedX;
+      y+=speedY;
+    }
+  }
+</script>
