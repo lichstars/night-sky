@@ -1,43 +1,44 @@
 
 
-<body onLoad="init();">
+<body onLoad="init();" style="background:black">
   <canvas id="canvas">
   </canvas>
 </body>
 
 <script>
   function init() {
-    var numberofcircles = 40;
+    var numberofcircles = 20;
     var circles = [];
     var canvas = document.getElementById('canvas');
     var context = canvas.getContext('2d');
 
-    var size = 2;
+    var size = 6;
     var width = window.innerWidth - 10;
     var height = window.innerHeight - 10;
 
     function Circle(speed, size, xPos, yPos) {
-        this.speed = speed;
-        this.width = size;
-        this.xPos = xPos;
-        this.yPos = yPos;
-        this.speedX=speed;
-        this.speedY=speed;
+      this.speed = speed;
+      this.width = size;
+      this.xPos = xPos;
+      this.yPos = yPos;
+      this.speedX=speed;
+      this.speedY=speed;
+      this.color='#'+(Math.random()*0xFFFFFF<<0).toString(16);
 
-        this.counter = 0;
+      this.counter = 0;
 
-        var signHelper = Math.floor(Math.random() * 2);
+      var signHelper = Math.floor(Math.random() * 2);
 
-        if (signHelper == 1) {
-            this.sign = -1;
-        } else {
-            this.sign = 1;
-        }
+      if (signHelper == 1) {
+          this.sign = -1;
+      } else {
+          this.sign = 1;
+      }
     }
 
     Circle.prototype.update = function () {
       context.beginPath();
-      context.fillStyle='#'+(Math.random()*0xFFFFFF<<0).toString(16);
+      context.fillStyle=this.color;
       context.arc(this.xPos,this.yPos,this.width,0,Math.PI*2,true);
       context.closePath();
       context.fill();
@@ -50,7 +51,7 @@
       this.yPos+= this.sign * this.speedY;
     };
 
-    function resizeCanvas() {
+    function loadCircles() {
       canvas.width = width;
       canvas.height = height;
 
@@ -66,7 +67,42 @@
       draw();
     }
 
-    resizeCanvas();
+    function checkRelationships(circles) {
+      var i = 0;
+
+      for (i = 0; i < circles.length; i++) {
+        var j = 0;
+        var currentCircle = circles[i];
+
+        x1 = currentCircle.xPos;
+        y1 = currentCircle.yPos;
+
+        for (j = 0; j < circles.length; j++) {
+          if(j!=i) {
+            var neighbourCircle = circles[j];
+
+            x2 = neighbourCircle.xPos;
+            y2 = neighbourCircle.yPos;
+
+            isIntimate(x1, y1, x2, y2);
+          }
+        }
+      }
+    }
+
+    function isIntimate(x1, y1, x2, y2) {
+      var strength = 200;
+      if ((Math.abs(x1 - x2) <= strength) && (Math.abs(y1 - y2) <= strength)) {
+        console.log('first dot coords - x: ' + x1 + ', y: ' + y1);
+        console.log('second dot coords - x: ' + x2 + ', y: ' + y2);
+        console.log('close!');
+
+        context.moveTo(x1,y1);
+        context.strokeStyle="#ffffff";
+        context.lineTo(x2,y2);
+        context.stroke();
+      }
+    }
 
     function draw() {
       context.clearRect(0,0,width,height);
@@ -75,7 +111,11 @@
           var myCircle = circles[i];
           myCircle.update();
       }
+      checkRelationships(circles);
       requestAnimationFrame(draw);
     }
+
+
+    loadCircles();
   }
 </script>
